@@ -1,5 +1,6 @@
 <script lang="ts">
     import { showDates } from '../stores/stateStore';
+    import { todoStore } from '../stores/todoStore';
 </script>
 
 <div class="fixed inset-y-0 left-0 z-30 w-64 overflow-y-auto bg-white shadow-lg">
@@ -16,17 +17,17 @@
         </div>
     </div>
     <div class="px-4 py-2">
-        <h2 class="text-gray-800 font-bold text-base uppercase">Lists</h2>
-        <nav class="mt-5">
-            <a href="#list1" class="block text-gray-800 font-semibold py-2 px-4 hover:bg-gray-100 rounded">List 1</a>
-            <a href="#list2" class="block text-gray-800 font-semibold py-2 px-4 hover:bg-gray-100 rounded">List 2</a>
-            <!-- Add additional list items here -->
+        <h2 class="text-gray-800 font-bold text-base uppercase"><a href="/list">Lists</a></h2>
+        <nav class="mt-2">
+            {#each $todoStore.lists as list}
+                <a href="/list/{list.id}" class="block text-gray-800 font-semibold py-2 px-4 hover:bg-gray-100 rounded">{list.title}</a>
+            {/each}
         </nav>
     </div>
 
     <div class="px-4 py-2">
         <h2 class="text-gray-800 font-bold text-base uppercase">Settings</h2>
-        <label class="relative inline-flex items-center cursor-pointer">
+        <label class="relative inline-flex items-center cursor-pointer mt-4">
             <input 
                 type="checkbox"
                 bind:checked={$showDates}
