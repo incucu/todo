@@ -1,7 +1,7 @@
 import { writable } from 'svelte/store';
 import type { Task, List } from '../types/types';
 
-const lists: { lists: List[] } = {
+const defaultLists: { lists: List[] } = {
     lists: [
         {
             id: 1,
@@ -28,4 +28,27 @@ const lists: { lists: List[] } = {
     ]
 };
 
-export const todoStore = writable(lists);
+// Update localStorage
+function updateLocalStorage(key, value) {
+    localStorage.setItem(key, JSON.stringify(value));
+}
+
+// Get the state from localStorage or return default state
+function getFromLocalStorage(key, defaultValue) {
+    const stored = localStorage.getItem(key);
+    if (stored) {
+        return JSON.parse(stored);
+    }
+    return defaultValue;
+}
+
+// Get lists from localStorage or use default
+const storedLists = getFromLocalStorage('lists', defaultLists);
+
+// Create the writable store
+export const todoStore = writable(storedLists);
+
+// Subscribe to the store to update localStorage
+todoStore.subscribe(value => {
+    updateLocalStorage('lists', value);
+});
