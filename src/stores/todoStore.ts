@@ -1,21 +1,5 @@
 import { writable } from 'svelte/store';
-
-interface Task {
-    id: number;
-    text: string;
-    checked: boolean;
-    done: boolean;
-    createdAt: string;
-    completedAt: string | null;
-    timerId?: number;
-}
-
-interface List {
-    id: number;
-    title: string;
-    createdAt: string;
-    tasks: Task[];
-}
+import type { Task, List } from '../types/types';
 
 const lists: { lists: List[] } = {
     lists: [

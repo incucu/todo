@@ -1,14 +1,19 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
+    import { tick } from 'svelte';
     import { page } from '$app/stores';
+
+    import type { Task } from '../types/types';
     import { todoStore } from '../stores/todoStore';
-    import { showDates } from '../stores/stateStore';
+    import TodoTask from '../components/TodoTask.svelte';
 
     let addTaskInput: HTMLInputElement;
-    onMount(() => {
-        addTaskInput.focus();
-    });
-    
+    $: if ($page.url.pathname) {
+        tick().then(() => {
+            // even with tick() there will be racing conditions, so have to use a delay to make sure the input gets focused
+            setTimeout(() => addTaskInput.focus(), 500);
+        });
+    }
+
     $: currentId = $page.params.id;
     $: list = $todoStore.lists.find(list => list.id.toString() === currentId) || {};
     $: tasks = list.tasks || [];
@@ -20,20 +25,20 @@
     let draggingItemIndex: number | null = null;
     let hoveredItemIndex : number | null = null;
 
-    $: if (draggingItemIndex != null && hoveredItemIndex != null && draggingItemIndex != hoveredItemIndex) {
+    // Let's swap the positions in the tasks array when a user drags a task to a new position in the list
+    $: if (
+        draggingItemIndex != null &&
+        hoveredItemIndex != null &&
+        draggingItemIndex != hoveredItemIndex
+    ) {
         [tasks[draggingItemIndex], tasks[hoveredItemIndex]] = [tasks[hoveredItemIndex], tasks[draggingItemIndex]];
         draggingItemIndex = hoveredItemIndex;
     }
 
-    // Function to handle when a task is checked
-    function startTaskTimer(task: Task, index: number): void {
-        task.timerId = window.setTimeout(() => {
-            completeTask(index);
-        }, 500);
-    }
+    // Complete the task and move it to the done list
+    function handleCompleteTask(event: Event): void {
+        const index = event.detail.index;
 
-    // Function to complete the task and move it to the done list
-    function completeTask(index: number): void {
         clearTimeout(tasks[index].timerId);
         tasks[index].done = true;
         tasks[index].completedAt = new Date().toLocaleString();
@@ -65,20 +70,16 @@
         });
     }
 
-    // Function to handle when a task is unchecked
-    function cancelTaskTimer(index: number): void {
-        clearTimeout(tasks[index].timerId);
-    }
-
-    function handleDragStart(event: DragEvent, task: Task, index: number): void {
+    function handleDragStart(event: Event): void {
+        const task = event.detail.task;
+        const index = event.detail.index;
         draggingItem = task;
         draggingItemIndex = index;
         draggingItemId = task.id;
     }
 
-    function handleDragOver(event: DragEvent, index: number): void {
-        event.preventDefault(); // Necessary to allow dropping
-        hoveredItemIndex = index;
+    function handleDragOver(event: Event): void {
+        hoveredItemIndex = event.detail.index;
     }
 
     function handleDragEnd(): void {
@@ -93,70 +94,6 @@
         background-color: #f0f0f0;
         margin: 0.5rem 0;
         border: 2px dashed #ccc;
-    }
-
-    .dragging {
-        opacity: 0.5;
-    }
-
-    .item {
-        display: flex; /* Establish flex container */
-        align-items: center; /* Center items vertically */
-        padding: 10px;
-        margin-bottom: 10px;
-        background-color: white;
-        cursor: grab;
-    }
-
-    .checkbox-container {
-        /* Container for the checkbox, keeping it aligned and a fixed size */
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-    }
-
-    .checkbox {
-        flex-shrink: 0;
-        width: 20px;
-        height: 20px;
-        margin-right: 14px;
-    }
-    
-    .text-container {
-        flex-grow: 1;
-    }
-
-    .date-container{
-        height: 12px;
-    }
-
-    .progress-bar-container {
-        position: relative;
-        width: 100%;
-        height: 4px;
-        background-color: #f0f0f0;
-        margin-top: 8px;
-    }
-
-    .progress-bar-container-no-dates {
-        position: relative;
-        width: 100%;
-        height: 4px;
-        background-color: #f0f0f0;
-        margin-top: 4px;
-        margin-bottom: -8px;
-    }
-
-    .progress-bar {
-        position: absolute;
-        height: 100%;
-        background-color: orange;
-        animation: moveAcross .5s linear forwards;
-    }
-
-    @keyframes moveAcross {
-        from { width: 0; }
-        to { width: 100%; }
     }
 </style>
 
@@ -189,41 +126,15 @@
             <ul class="divide-y divide-gray-200 px-4">
                 {#each tasks as task, index (task.id)}
                     {#if !task.done}
-                        <li class="py-4 flex flex-col justify-between items-start group to-do-list-item {draggingItemId === task.id ? 'dragging' : ''}"
-                            draggable="true"
-                            on:dragstart={(event) => handleDragStart(event, task, index)}
-                            on:dragover={(event) => handleDragOver(event, index)}
-                            on:dragend={handleDragEnd}>
-                            <div class="checkbox-container w-full">
-                                <input 
-                                    id={task.id} 
-                                    type="checkbox" 
-                                    class="checkbox h-4 w-4 text-teal-600 focus:ring-teal-500 border-gray-300 rounded"
-                                    bind:checked={task.checked}
-                                    on:change={
-                                        task.checked ? () => startTaskTimer(task, index) : () => cancelTaskTimer(index)
-                                    }
-                                >
-                                <div class="text-container">
-                                    <label for={task.id} class="block text-gray-900">
-                                        <span class="text-g font-medium">{task.text}</span>
-                                    </label>
-                                </div>
-                            </div>
-                            {#if task.checked && $showDates}
-                                <div class="progress-bar-container">
-                                    <div class="progress-bar"></div>
-                                </div>
-                            {:else if task.checked && !$showDates}
-                                <div class="progress-bar-container-no-dates">
-                                    <div class="progress-bar"></div>
-                                </div>
-                            {:else if $showDates}
-                                <div class="date-container">
-                                    <span class="text-gray-400 text-xs">Added: {task.createdAt}</span>
-                                </div>
-                            {/if}
-                        </li>
+                        <TodoTask 
+                            {task} 
+                            {index} 
+                            {draggingItemId}
+                            on:dragstart={handleDragStart}
+                            on:dragover={handleDragOver}
+                            on:dragend={handleDragEnd}
+                            on:completetask={handleCompleteTask}
+                        />
                     {/if}
                 {/each}
             </ul>

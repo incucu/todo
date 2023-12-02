@@ -1,20 +1,20 @@
 <script lang="ts">
     import { page } from '$app/stores';
     import { todoStore } from '../stores/todoStore';
-    import { showDates } from '../stores/stateStore';
+    import DoneTask from '../components/DoneTask.svelte';
 
     $: currentId = $page.params.id;
     $: tasks = $todoStore.lists.find(list => list.id.toString() === currentId)?.tasks || [];
 
     //setTimeout(() => console.log(tasks), 1000);
 
-    function markAsUnDone(taskId: number): void {
-        const taskIndex = tasks.findIndex(t => t.id === taskId);
-        if(taskIndex !== -1) {
-            tasks[taskIndex].done = false;
-            tasks[taskIndex].checked = false;
-            tasks[taskIndex].completedAt = null;
-            const [task] = tasks.splice(taskIndex, 1);
+    function handleMarkUnDone(event: Event): void {
+        const index = tasks.findIndex(t => t.id === event.detail.task.id);
+        if(index !== -1) {
+            tasks[index].done = false;
+            tasks[index].checked = false;
+            tasks[index].completedAt = null;
+            const [task] = tasks.splice(index, 1);
             tasks.unshift(task); // Add the task to the top of the array
 
             // Let's update the store
@@ -40,19 +40,10 @@
             <ul class="divide-y divide-gray-200 px-4">
                 {#each tasks as task (task.id)}
                     {#if task.done}
-                        <li class="py-4 flex justify-between items-center group">
-                            <div class="text-container">
-                                <span class="block text-gray-900 font-medium">{task.text}</span>
-                                {#if $showDates}
-                                    <span class="text-gray-400 text-xs">Added: {task.createdAt}  |  Completed: {task.completedAt}</span>
-                                {/if}
-                            </div>
-                            <button
-                                class="text-xs text-white bg-teal-500 hover:bg-teal-700 px-2 py-1 rounded"
-                                on:click={() => markAsUnDone(task.id)}>
-                                Not&nbsp;Done
-                            </button>
-                        </li>
+                        <DoneTask 
+                            {task}
+                            on:markundone={handleMarkUnDone}
+                        />
                     {/if}
                 {/each}
             </ul>
