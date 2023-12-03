@@ -1,18 +1,10 @@
 <script lang="ts">
-    import { tick } from 'svelte';
     import { page } from '$app/stores';
 
     import type { Task } from '../types/types';
     import { todoStore } from '../stores/todoStore';
     import TodoTask from '../components/TodoTask.svelte';
-
-    let addTaskInput: HTMLInputElement;
-    $: if ($page.url.pathname) {
-        tick().then(() => {
-            // even with tick() there will be racing conditions, so have to use a delay to make sure the input gets focused
-            setTimeout(() => addTaskInput.focus(), 500);
-        });
-    }
+    import TodoAddTask from '../components/TodoAddTask.svelte';
 
     $: listId = $page.params.id;
     $: list = $todoStore.lists.find(list => list.id.toString() === listId) || {};
@@ -43,7 +35,7 @@
     // Complete the task and move it to the done list
     function handleCompleteTask(event: Event): void {
         const index = event.detail.index;
-        todoStore.completeTask(listId, tasks[index].id, new Date().toLocaleString());
+        todoStore.completeTask(listId, tasks[index].id);
     }
 
     function handleDragStart(event: Event): void {
@@ -86,19 +78,7 @@
             <div class="px-4 py-2">
                 <h1 class="text-gray-800 font-bold text-2xl uppercase">{list.title}</h1>
             </div>
-            <div class="w-full max-w-xl mx-auto px-4 py-2">
-                <div class="flex items-center border-b-2 border-teal-500 py-2">
-                    <input
-                        bind:this={addTaskInput}
-                        class="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
-                        type="text" placeholder="Add a task">
-                    <button
-                        class="flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded"
-                        type="button">
-                        Add
-                    </button>
-                </div>
-            </div>
+            <TodoAddTask />
             <ul class="divide-y divide-gray-200 px-4">
                 {#each tasks as task, index (task.id)}
                     {#if !task.done}

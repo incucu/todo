@@ -2,6 +2,7 @@
     import type { Task } from '../types/types';
     import { createEventDispatcher } from 'svelte';
     import { showDates } from '../stores/stateStore';
+    import { todoStore } from '../stores/todoStore';
 
     const dispatch = createEventDispatcher();
 
@@ -16,7 +17,7 @@
     <div class="text-container">
         <span class="block text-gray-900 font-medium">{task.text}</span>
         {#if $showDates}
-            <span class="text-gray-400 text-xs">Added: {task.createdAt}  |  Completed: {task.completedAt}</span>
+            <span class="text-gray-400 text-xs">Added: {todoStore.formatTaskDate(task.createdAt)}  |  Completed: {todoStore.formatTaskDate(task.completedAt)}</span>
         {/if}
     </div>
     <button

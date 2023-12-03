@@ -66,8 +66,29 @@ class TodoStore {
         });
     }
 
-    completeTask(listId: number, taskId: number, completedAt: string) {
-        this.updateTask(listId, taskId, { done: true, completedAt }, 'completedAt');
+    addTask(listId: number, taskText: string) {
+        this.store.update(store => {
+            const listIndex = store.lists.findIndex(list => list.id === Number(listId));
+            if (listIndex === -1) return store; // list not found
+
+            const newTask: Task = {
+                id: Date.now(),
+                text: taskText,
+                checked: false,
+                done: false,
+                createdAt: Date().toLocaleString(),
+                completedAt: null
+            };
+
+            const updatedLists = [...store.lists];
+            updatedLists[listIndex].tasks = [newTask, ...updatedLists[listIndex].tasks];
+
+            return { ...store, lists: updatedLists };
+        });
+    }
+
+    completeTask(listId: number, taskId: number) {
+        this.updateTask(listId, taskId, { done: true, completedAt: new Date().toLocaleString() }, 'completedAt');
     }
 
     unDoneTask(listId: number, taskId: number) {
@@ -92,6 +113,19 @@ class TodoStore {
         });
     }
 
+    formatTaskDate(date : String) {
+        const userLocale = navigator.language;
+
+        // Let's format createdAt/completedAt date according to the browser locale for the output
+        return new Date(date).toLocaleDateString(userLocale, {
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric', 
+            hour: '2-digit', 
+            minute: '2-digit'
+        });  
+    }
+
     // Let's expose the subscribe method
     subscribe(run: any) {
         return this.store.subscribe(run);
@@ -114,12 +148,14 @@ const defaultLists: { lists: List[] } = {
         },
         {
             id: 2,
-            title: 'Purchase list',
+            title: 'Shop list',
             createdAt: '2023-11-29T15:20:00',
             tasks: [
                 { id: 1, text: 'Milk', checked: false, done: false, createdAt: '2022-11-22T14:45:38', completedAt: null },
                 { id: 2, text: 'Apples', checked: false, done: false, createdAt: '2022-11-22T15:12:41', completedAt: null },
                 { id: 3, text: 'Bread', checked: false, done: false, createdAt: '2022-11-22T17:00:13', completedAt: null },
+                { id: 4, text: 'Skeyl subscription', checked: false, done: false, createdAt: '2022-11-23T00:01:37', completedAt: null },
+                { id: 5, text: 'Codici Masserie Appassimento Primitivo 2020', checked: false, done: false, createdAt: '2022-11-26T11:31:06', completedAt: null },
             ]
         },
     ]

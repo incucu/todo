@@ -1,5 +1,6 @@
 <script lang="ts">
     import type { Task } from '../types/types';
+    import { todoStore } from '../stores/todoStore';
     import { createEventDispatcher } from 'svelte';
     import { showDates } from '../stores/stateStore';
     const dispatch = createEventDispatcher();
@@ -7,8 +8,6 @@
     export let task: Task;
     export let index: number;
     export let draggingItemId: number | null = null;
-
-    //setTimeout(() => console.log(task), 1000);
 
     function onDragStart(event: DragEvent) {
         dispatch('dragstart', { event, task, index });
@@ -126,7 +125,7 @@
         </div>
     {:else if $showDates}
         <div class="date-container">
-            <span class="text-gray-400 text-xs">Added: {task.createdAt}</span>
+            <span class="text-gray-400 text-xs">Added: {todoStore.formatTaskDate(task.createdAt)}</span>
         </div>
     {/if}
 </li>
