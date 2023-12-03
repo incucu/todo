@@ -14,11 +14,9 @@
         });
     }
 
-    $: currentId = $page.params.id;
-    $: list = $todoStore.lists.find(list => list.id.toString() === currentId) || {};
+    $: listId = $page.params.id;
+    $: list = $todoStore.lists.find(list => list.id.toString() === listId) || {};
     $: tasks = list.tasks || [];
-
-    //setTimeout(() => console.log(tasks), 1000);
 
     let draggingItem: Task | null = null;
     let draggingItemId: number | null = null;
@@ -31,43 +29,21 @@
         hoveredItemIndex != null &&
         draggingItemIndex != hoveredItemIndex
     ) {
-        [tasks[draggingItemIndex], tasks[hoveredItemIndex]] = [tasks[hoveredItemIndex], tasks[draggingItemIndex]];
-        draggingItemIndex = hoveredItemIndex;
+        todoStore.updateTaskOrder(listId, draggingItemIndex, hoveredItemIndex);
+
+        // As the tasks are sorted in TodoStore then I need to fetch the changes manually to update the list on the page.
+        // Less code would have been needed if I just sort the tasks here, but then I'm bringing some of the list handling
+        // code out from the dedicated class and I don't want that to happen.
+        list = $todoStore.lists.find(list => list.id.toString() === listId) || {};
+        tasks = list.tasks || [];
+
+        draggingItemIndex = hoveredItemIndex; // Update the current dragging index
     }
 
     // Complete the task and move it to the done list
     function handleCompleteTask(event: Event): void {
         const index = event.detail.index;
-
-        clearTimeout(tasks[index].timerId);
-        tasks[index].done = true;
-        tasks[index].completedAt = new Date().toLocaleString();
-
-        // Sort the tasks array by the completedAt property in descending order for done tasks
-        tasks = tasks.slice().sort((a, b) => {
-            // Both tasks are done, compare their completedAt timestamps
-            if (a.done && b.done) {
-                const dateA = a.completedAt ? new Date(a.completedAt).getTime() : 0;
-                const dateB = b.completedAt ? new Date(b.completedAt).getTime() : 0;
-                return dateB - dateA;
-            }
-            // If only one task is done, it should come after the not done task
-            if (a.done) return 1;
-            if (b.done) return -1;
-            // If neither is done, keep their original order
-            return 0;
-        });
-
-        // Let's update the store
-        // NB! Should be done by a custom store method like this: todoStore.updateTasks(currentId, tasks);
-        todoStore.update(store => {
-            let updatedLists = [...store.lists];
-            let listIndex = updatedLists.findIndex(l => l.id.toString() === currentId);
-            if (listIndex !== -1) {
-                updatedLists[listIndex].tasks = tasks;
-            }
-            return { ...store, lists: updatedLists };
-        });
+        todoStore.completeTask(listId, tasks[index].id, new Date().toLocaleString());
     }
 
     function handleDragStart(event: Event): void {
