@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { Task } from '../types/types';
     import { createEventDispatcher } from 'svelte';
-    import { showDates } from '../stores/stateStore';
+    import { settings } from '../stores/settingsStore';
 
     const dispatch = createEventDispatcher();
 
@@ -16,7 +16,7 @@
 <li class="py-4 flex justify-between items-center group">
     <div class="text-container">
         <span class="block text-gray-900 font-medium">{task.text}</span>
-        {#if $showDates}
+        {#if $settings.showDates}
             <span class="text-gray-400 text-xs">Added: {todoStore.formatTaskDate(task.createdAt)}  |  Completed: {todoStore.formatTaskDate(task.completedAt)}</span>
         {/if}
     </div>

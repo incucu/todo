@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { Task } from '../types/types';
     import { createEventDispatcher } from 'svelte';
-    import { showDates } from '../stores/stateStore';
+    import { settings } from '../stores/settingsStore';
     const dispatch = createEventDispatcher();
 
     export let todoStore;
@@ -124,15 +124,15 @@
             X
         </button>
     </div>
-    {#if task.checked && $showDates}
+    {#if task.checked && $settings.showDates}
         <div class="progress-bar-container">
             <div class="progress-bar"></div>
         </div>
-    {:else if task.checked && !$showDates}
+    {:else if task.checked && !$settings.showDates}
         <div class="progress-bar-container-no-dates">
             <div class="progress-bar"></div>
         </div>
-    {:else if $showDates}
+    {:else if $settings.showDates}
         <div class="date-container">
             <span class="text-gray-400 text-xs">Added: {todoStore.formatTaskDate(task.createdAt)}</span>
         </div>
