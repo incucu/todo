@@ -11,5 +11,5 @@
         <SidebarSettings />
     {/if}
     <SidebarAddList {todoStore} {page}/>
-    <SidebarList {todoStore} />
+    <SidebarList {todoStore} {page} />
 </div>

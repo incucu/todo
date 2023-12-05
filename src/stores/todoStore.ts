@@ -127,15 +127,18 @@ class TodoStore {
     }
 
     addList(listTitle: string) {
+        let newListId;
         this.store.update(store => {
+            newListId = Date.now();
             const newList: List = {
-                id: Date.now(),
+                id: newListId,
                 title: listTitle,
                 createdAt: new Date().toLocaleString(),
                 tasks: []
             };
             return { ...store, lists: [newList, ...store.lists] };
         });
+        return newListId;
     }
 
     formatTaskDate(date : String) {

@@ -1,5 +1,6 @@
 <script lang="ts">
     import { tick } from 'svelte';
+    import { goto } from '$app/navigation';
 
     export let todoStore; 
     export let page;
@@ -18,7 +19,8 @@
     function handleAddList() {
         const listTitle = addListInput.value.trim();
         if (listTitle) {
-            todoStore.addList(listTitle);
+            const newListId = todoStore.addList(listTitle);
+            goto(`/list/${newListId}`);
             addListInput.value = '';
         }
     }
