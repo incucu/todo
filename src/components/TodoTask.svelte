@@ -1,10 +1,10 @@
 <script lang="ts">
     import type { Task } from '../types/types';
-    import { todoStore } from '../stores/todoStore';
     import { createEventDispatcher } from 'svelte';
     import { showDates } from '../stores/stateStore';
     const dispatch = createEventDispatcher();
 
+    export let todoStore;
     export let task: Task;
     export let index: number;
     export let draggingItemId: number | null = null;

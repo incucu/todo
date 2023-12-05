@@ -6,7 +6,8 @@
     $: listId = $page.params.id;
 
     let addTaskInput: HTMLInputElement;
-    $: if ($page.url.pathname) {
+    // Let's focus the task adding input
+    $: if (listId) {
         tick().then(() => {
             // even with tick() there will be racing conditions, so have to use a delay to make sure the input gets focused
             setTimeout(() => addTaskInput.focus(), 500);

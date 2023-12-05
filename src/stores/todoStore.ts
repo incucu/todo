@@ -126,6 +126,18 @@ class TodoStore {
         });
     }
 
+    addList(listTitle: string) {
+        this.store.update(store => {
+            const newList: List = {
+                id: Date.now(),
+                title: listTitle,
+                createdAt: new Date().toLocaleString(),
+                tasks: []
+            };
+            return { ...store, lists: [newList, ...store.lists] };
+        });
+    }
+
     formatTaskDate(date : String) {
         const userLocale = navigator.language;
 
@@ -140,8 +152,10 @@ class TodoStore {
     }
 
     // Let's expose the subscribe method
-    subscribe(run: any) {
-        return this.store.subscribe(run);
+    // It takes a callback function as a parameter, which will be executed every time the state changes.
+    // A callback function should handle the new state of the store.
+    subscribe(callback: any) {
+        return this.store.subscribe(callback);
     }
 }
 
@@ -149,14 +163,13 @@ const defaultLists: { lists: List[] } = {
     lists: [
         {
             id: 1,
-            title: 'Personal To-Do List',
+            title: 'User complaints',
             createdAt: '2023-11-26T09:00:00',
             tasks: [
-                { id: 1, text: 'The first task is always the most difficult, because you have to start from the beginning', checked: false, done: false, createdAt: '2022-11-22T14:45:38', completedAt: null },
-                { id: 2, text: 'Yeah, the second task is an easy one!', checked: false, done: false, createdAt: '2023-04-21T17:00:58', completedAt: null },
-                { id: 3, text: 'Do you really need a third one?', checked: false, done: false, createdAt: '2023-09-18T19:16:18', completedAt: null },
-                { id: 4, text: 'The 4th task!', checked: false, done: false, createdAt: '2024-02-15T21:31:38', completedAt: null },
-                { id: 5, text: 'Yet another task!', checked: false, done: false, createdAt: '2024-07-14T23:46:58', completedAt: null },
+                { id: 1, text: 'Lists cannot be deleted, that\'s not good :( Please implement it!', checked: false, done: false, createdAt: '2024-07-14T23:46:58', completedAt: null },
+                { id: 2, text: 'Lists cannot be ordered either...', checked: false, done: false, createdAt: '2024-02-15T21:31:38', completedAt: null },
+                { id: 3, text: 'My friend can\'t see updates to a shared list; are we missing a backend component?', checked: false, done: false, createdAt: '2023-09-18T19:16:18', completedAt: null },
+                { id: 4, text: 'This app looks awful on my iPhone', checked: false, done: false, createdAt: '2023-04-21T17:00:58', completedAt: null },
             ]
         },
         {
@@ -164,11 +177,11 @@ const defaultLists: { lists: List[] } = {
             title: 'Shop list',
             createdAt: '2023-11-29T15:20:00',
             tasks: [
-                { id: 1, text: 'Milk', checked: false, done: false, createdAt: '2022-11-22T14:45:38', completedAt: null },
-                { id: 2, text: 'Apples', checked: false, done: false, createdAt: '2022-11-22T15:12:41', completedAt: null },
+                { id: 1, text: 'Milk', checked: false, done: false, createdAt: '2022-11-26T11:31:06', completedAt: null },
+                { id: 2, text: 'Apples', checked: false, done: false, createdAt: '2022-11-23T00:01:37', completedAt: null },
                 { id: 3, text: 'Bread', checked: false, done: false, createdAt: '2022-11-22T17:00:13', completedAt: null },
-                { id: 4, text: 'Skeyl subscription', checked: false, done: false, createdAt: '2022-11-23T00:01:37', completedAt: null },
-                { id: 5, text: 'Codici Masserie Appassimento Primitivo 2020', checked: false, done: false, createdAt: '2022-11-26T11:31:06', completedAt: null },
+                { id: 4, text: 'Skeyl subscription', checked: false, done: false, createdAt: '2022-11-22T15:12:41', completedAt: null },
+                { id: 5, text: 'Codici Masserie Appassimento Primitivo 2020', checked: false, done: false, createdAt: '2022-11-22T14:45:38', completedAt: null },
             ]
         },
     ]

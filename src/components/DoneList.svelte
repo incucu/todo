@@ -6,8 +6,6 @@
     $: listId = $page.params.id;
     $: tasks = $todoStore.lists.find(list => list.id.toString() === listId)?.tasks || [];
 
-    //setTimeout(() => console.log(tasks), 1000);
-
     function handleMarkUnDone(event: Event): void {
         const index = tasks.findIndex(t => t.id === event.detail.task.id);
         todoStore.unDoneTask(listId, tasks[index].id);
@@ -24,7 +22,7 @@
                 {#each tasks as task (task.id)}
                     {#if task.done}
                         <DoneTask 
-                            {task}
+                            {task} {todoStore}
                             on:markundone={handleMarkUnDone}
                         />
                     {/if}

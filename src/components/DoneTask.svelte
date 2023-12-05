@@ -2,11 +2,11 @@
     import type { Task } from '../types/types';
     import { createEventDispatcher } from 'svelte';
     import { showDates } from '../stores/stateStore';
-    import { todoStore } from '../stores/todoStore';
 
     const dispatch = createEventDispatcher();
 
     export let task: Task;
+    export let todoStore;
 
     function markUnDone(): void {
         dispatch('markundone', { task });

@@ -89,9 +89,7 @@
                 {#each tasks as task, index (task.id)}
                     {#if !task.done}
                         <TodoTask 
-                            {task} 
-                            {index} 
-                            {draggingItemId}
+                            {todoStore} {task} {index} {draggingItemId}
                             on:dragstart={handleDragStart}
                             on:dragover={handleDragOver}
                             on:dragend={handleDragEnd}
