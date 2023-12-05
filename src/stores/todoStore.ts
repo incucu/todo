@@ -113,6 +113,19 @@ class TodoStore {
         });
     }
 
+    deleteTask(listId: number, taskId: number) {
+        this.store.update(store => {
+            const listIndex = store.lists.findIndex(list => list.id === Number(listId));
+            if (listIndex === -1) return store; // list not found
+
+            const updatedLists = [...store.lists];
+            // Let's filter out the given task
+            updatedLists[listIndex].tasks = updatedLists[listIndex].tasks.filter(task => task.id !== taskId);
+
+            return { ...store, lists: updatedLists };
+        });
+    }
+
     formatTaskDate(date : String) {
         const userLocale = navigator.language;
 

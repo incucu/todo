@@ -33,6 +33,10 @@
     function cancelTaskTimer(): void {
        clearTimeout(task.timerId);
     }
+
+    function deleteTask(): void {
+        dispatch('deletetask', { index })
+    }
 </script>
 
 <style>
@@ -114,6 +118,11 @@
                 <span class="text-g font-medium">{task.text}</span>
             </label>
         </div>
+        <button
+            class="text-xs text-white bg-gray-500 hover:bg-red-700 px-2 py-1 rounded"
+            on:click={() => deleteTask()}>
+            X
+        </button>
     </div>
     {#if task.checked && $showDates}
         <div class="progress-bar-container">

@@ -38,6 +38,12 @@
         todoStore.completeTask(listId, tasks[index].id);
     }
 
+    // Delete the task
+    function handleDeleteTask(event: Event): void {
+        const index = event.detail.index;
+        todoStore.deleteTask(listId, tasks[index].id);
+    }
+
     function handleDragStart(event: Event): void {
         const task = event.detail.task;
         const index = event.detail.index;
@@ -90,6 +96,7 @@
                             on:dragover={handleDragOver}
                             on:dragend={handleDragEnd}
                             on:completetask={handleCompleteTask}
+                            on:deletetask={handleDeleteTask}
                         />
                     {/if}
                 {/each}
