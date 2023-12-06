@@ -1,12 +1,11 @@
-# TO DO app
+# TO-DO app for Skeyl front-end training course
 
-Install steps:
+This is a TO-DO application built with Svelte and SvelteKit, using Tailwind for styling. The application allows users to manage their tasks in a simple and intuitive way.
 
-## Installing svelte
-- npm create svelte@latest to-do   
-- cd to-do
-- npm install
+## About
 
-## Installing Tailwind (from https://tailwindcss.com/docs/guides/sveltekit)
-- npm install -D tailwindcss postcss autoprefixer
-- npx tailwindcss init -p
+The heart of this app is **store/todoStore.ts**, which handles everything related to the data and its persistance.
+
+The tasks are ordered newest on top, unless the list is manually reordered by drag and drop. Done tasks are ordered by the completion date, latest on top.
+
+By Incucu

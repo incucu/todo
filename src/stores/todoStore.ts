@@ -169,11 +169,11 @@ const defaultLists: { lists: List[] } = {
             title: 'User complaints',
             createdAt: '2023-11-26T09:00:00',
             tasks: [
-                { id: 1, text: 'Lists cannot be deleted, that\'s not good :( Please implement it!', checked: false, done: false, createdAt: '2024-07-14T23:46:58', completedAt: null },
-                { id: 2, text: 'Lists cannot be ordered either...', checked: false, done: false, createdAt: '2024-02-15T21:31:38', completedAt: null },
-                { id: 3, text: 'I deleted a task by accident, please add \"Are you sure\" popup!', checked: false, done: false, createdAt: '2024-02-12T19:42:46', completedAt: null },
-                { id: 4, text: 'My friend can\'t see updates to a shared list; are we missing a backend component?', checked: false, done: false, createdAt: '2023-09-18T19:16:18', completedAt: null },
-                { id: 5, text: 'This app looks awful on my iPhone', checked: false, done: false, createdAt: '2023-04-21T17:00:58', completedAt: null },
+                { id: 1, text: 'Lists cannot be deleted, that\'s not good :( Please implement it!', checked: false, done: false, createdAt: '2023-07-14T23:46:58', completedAt: null },
+                { id: 2, text: 'Lists cannot be ordered either...', checked: false, done: false, createdAt: '2023-02-15T21:31:38', completedAt: null },
+                { id: 3, text: 'I deleted a task by accident, please add \"Are you sure\" popup!', checked: false, done: false, createdAt: '2023-02-12T19:42:46', completedAt: null },
+                { id: 4, text: 'My friend can\'t see updates to a shared list; are we missing a backend component?', checked: false, done: false, createdAt: '2022-09-18T19:16:18', completedAt: null },
+                { id: 5, text: 'This app looks awful on my iPhone', checked: false, done: false, createdAt: '2022-04-21T17:00:58', completedAt: null },
             ]
         },
         {
